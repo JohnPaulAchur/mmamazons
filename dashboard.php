@@ -50,64 +50,72 @@ while($row = mysqli_fetch_assoc($data)){
 
     // Initialize an array to store dates
     $dateArray = array();
+    $eachIncTotal = array();
+ 
+
 
     // Get dates for the last 10 days
-    for ($i = 0; $i <= 5; $i++) {
+    for ($i = 0; $i <= 12; $i++) {
         $date = date("Y-m-d", strtotime("-$i days"));
         // Add each date to the array
         $dateArray[] = date("M j",strtotime($date));
 
         //income query
-		$queryInc = $connect->query("SELECT SUM(total) AS sumInc FROM income WHERE date=$date");
-
+		$queryInc = $conn->query("SELECT *,SUM(total) AS sumInc FROM income WHERE date='$date'");
+        // $queryInc->execute();
+        // mysqli_query($connect,$queryInc);
 		// inc loop to get array
-		while ($row=$queryInc->fetch_array()) {
-
-			$gottenincTotals = $row['sumInc'];
+		while($row=$queryInc->fetch_array()){
+            $gottenincTotals = $row['sumInc'];
 			$eachIncTotal[] = $gottenincTotals;
 			}
+        }
+
+			
         
-    }
+    // }
+
+//    print_r($eachIncTotal);
     
-	$dateFetch = $connect->query("SELECT DISTINCT DATE(date) AS unique_dates
-    FROM income
-    WHERE date BETWEEN CURDATE() - INTERVAL 10 DAY AND CURDATE();
-    ");
+	// $dateFetch = $connect->query("SELECT DISTINCT DATE(date) AS unique_dates
+    // FROM income
+    // WHERE date BETWEEN CURDATE() - INTERVAL 10 DAY AND CURDATE();
+    // ");
 
 
 	
-	while ($row=$dateFetch->fetch_array()) {
-		$date = $row['unique_dates'];
+	// while ($row=$dateFetch->fetch_array()) {
+	// 	$date = $row['unique_dates'];
 		
-		//income query
-		$queryInc = $connect->query("SELECT SUM(total) AS sumInc FROM income WHERE date=$date");
+	// 	//income query
+	// 	$queryInc = $connect->query("SELECT SUM(total) AS sumInc FROM income WHERE date=$date");
 
 
 
-		// //sales query
-		// $quer = $connect->query("SELECT sum(total) AS sumTotal FROM sales WHERE month=$month AND year=$year");
+	// 	// //sales query
+	// 	// $quer = $connect->query("SELECT sum(total) AS sumTotal FROM sales WHERE month=$month AND year=$year");
 
-        $timeSt = strtotime($date);
-		$eachDay[] = date('M j',$timeSt);
-
-
-
-		// purchase loop to get array
-		while ($row=$queryInc->fetch_array()) {
-
-			$gottenincTotals = $row['sumInc'];
-			$eachIncTotal[] = $gottenincTotals;
-			}
-
-		// sales loop to get array	
-		// while ($brow=$quer->fetch_array()) {
-
-		// 	$gottenTotals = $brow['sumTotal'];
-		// 	$eachTotal[] = $gottenTotals;
-		// 	}
+    //     $timeSt = strtotime($date);
+	// 	$eachDay[] = date('M j',$timeSt);
 
 
-	}
+
+	// 	// purchase loop to get array
+	// 	while ($row=$queryInc->fetch_array()) {
+
+	// 		$gottenincTotals = number_format($row['sumInc']);
+	// 		$eachIncTotal[] = $gottenincTotals;
+	// 		}
+
+	// 	// sales loop to get array	
+	// 	// while ($brow=$quer->fetch_array()) {
+
+	// 	// 	$gottenTotals = $brow['sumTotal'];
+	// 	// 	$eachTotal[] = $gottenTotals;
+	// 	// 	}
+
+
+	// }
 	
 	?>
 
@@ -297,7 +305,7 @@ while($row = mysqli_fetch_assoc($data)){
 
 ?>
 
-<!-- <script>
+<script>
     // Set new default font family and font color to mimic Bootstrap's default styling
     Chart.defaults.global.defaultFontFamily = '-apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif';
     Chart.defaults.global.defaultFontColor = '#292b2c';
@@ -307,9 +315,9 @@ while($row = mysqli_fetch_assoc($data)){
     var myLineChart = new Chart(ctx, {
     type: 'line',
     data: {
-        labels: <?php echo json_encode($dateArray) ?>,
+        labels: <?php echo json_encode(array_reverse($dateArray)) ?>,
         datasets: [{
-        label: "Sessions",
+        label: "Income",
         lineTension: 0.3,
         backgroundColor: "rgba(2,117,216,0.2)",
         borderColor: "rgba(2,117,216,1)",
@@ -320,7 +328,7 @@ while($row = mysqli_fetch_assoc($data)){
         pointHoverBackgroundColor: "rgba(2,117,216,1)",
         pointHitRadius: 50,
         pointBorderWidth: 2,
-        data: <?php echo json_encode($eachIncTotal) ?>,
+        data: <?php echo json_encode(array_reverse($eachIncTotal)) ?>,
         }],
     },
     options: {
@@ -339,7 +347,7 @@ while($row = mysqli_fetch_assoc($data)){
         yAxes: [{
             ticks: {
             min: 0,
-            max: 40000,
+            max: 100000,
             maxTicksLimit: 5
             },
             gridLines: {
@@ -353,4 +361,4 @@ while($row = mysqli_fetch_assoc($data)){
     }
     });
 
-</script> -->
+</script>

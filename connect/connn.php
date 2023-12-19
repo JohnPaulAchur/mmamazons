@@ -23,4 +23,5 @@ function check_inpu($name){
 <?php
 $connect = mysqli_connect('localhost','root','','havilah');
 
+
 ?>

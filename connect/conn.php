@@ -28,7 +28,11 @@ function check_input($name){
 
 <?php
 $connect = mysqli_connect('localhost','root','','foodlicious');
+$conn = new mysqli('localhost', 'root', '', 'foodlicious');
 
+if($conn->connect_error){
+    die('connect fail'.$conn->connect_error);
+}
 
 
 ?>
